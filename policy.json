@@ -1,0 +1,7 @@
+{
+  "secrets":    {"max": 0, "title": "Secrets in the code (gitleaks)",              "rule": "no secrets at all"},
+  "sast":       {"max": 0, "title": "Insecure code patterns (semgrep)",           "rule": "no ERROR-level findings"},
+  "dockerfile": {"max": 0, "title": "Dockerfile best practices (hadolint)",       "rule": "no warnings or errors"},
+  "deps":       {"max": 0, "title": "Vulnerable dependencies (trivy)",            "rule": "no fixable HIGH or CRITICAL CVEs"},
+  "image":      {"max": 0, "title": "Built image: OS and packages (trivy)",       "rule": "no fixable CRITICAL CVEs and no baked-in secrets"}
+}

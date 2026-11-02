@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+*.pem
+.DS_Store
+# generated at run time (never commit; the demo "leaked" secrets live here)
+apps/vulnerable/.env.production
+reports/*
+!reports/.gitkeep

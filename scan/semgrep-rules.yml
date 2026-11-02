@@ -1,0 +1,59 @@
+# Our own small ruleset. Rules live in the repo so the demo needs no internet access for them.
+rules:
+  - id: sql-injection-string-built-query
+    languages: [python]
+    severity: ERROR
+    message: The SQL query is built from a string. Use a ? placeholder and pass the values separately.
+    pattern-either:
+      - pattern: $DB.execute("..." % $X)
+      - pattern: $DB.execute("...".format(...))
+      - pattern: $DB.execute(f"...")
+      - pattern: $DB.execute("..." + $X)
+
+  - id: flask-debug-enabled
+    languages: [python]
+    severity: ERROR
+    message: Flask debug mode exposes an interactive console that runs code. Never enable it in a deployed app.
+    pattern: $APP.run(..., debug=True, ...)
+
+  - id: eval-or-exec
+    languages: [python]
+    severity: ERROR
+    message: eval/exec run arbitrary code. Use ast.literal_eval or real parsing.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: exec(...)
+
+  - id: yaml-unsafe-load
+    languages: [python]
+    severity: ERROR
+    message: yaml.load can create arbitrary Python objects. Use yaml.safe_load.
+    pattern-either:
+      - pattern: yaml.load($X)
+      - pattern: yaml.load($X, Loader=yaml.Loader)
+      - pattern: yaml.load($X, Loader=yaml.UnsafeLoader)
+
+  - id: subprocess-shell-true
+    languages: [python]
+    severity: ERROR
+    message: shell=True lets input become commands. Pass a list of arguments and leave shell off.
+    pattern: subprocess.$FUNC(..., shell=True, ...)
+
+  - id: hardcoded-credential
+    languages: [python]
+    severity: ERROR
+    message: A credential is written in the source code. Read it from the environment or a secret store.
+    patterns:
+      - pattern: $NAME = "..."
+      - metavariable-regex:
+          metavariable: $NAME
+          regex: (?i).*(password|passwd|secret|token|api_?key).*
+      - pattern-not: $NAME = ""
+
+  - id: weak-hash
+    languages: [python]
+    severity: WARNING
+    message: MD5 and SHA-1 are broken for security use. Use SHA-256 or a password hash (scrypt, bcrypt).
+    pattern-either:
+      - pattern: hashlib.md5(...)
+      - pattern: hashlib.sha1(...)

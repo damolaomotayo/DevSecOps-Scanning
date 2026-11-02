@@ -1,0 +1,12 @@
+# The report dashboard: a static page of scan results on port 8080. The scanners themselves are
+# run on demand by scripts/scan.sh (docker run --rm), so nothing else stays running.
+name: dso
+services:
+  dashboard:
+    image: ${NGINX_IMAGE:-nginx:1.27-alpine}
+    container_name: dso-dashboard
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./reports:/usr/share/nginx/html:ro
